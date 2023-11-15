@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.product_source.dao.ManagerFenceHouseMapper">
+    <!--基础查询结果集-->
+    <resultMap id="BaseResultMap" type="managerFenceHouse">
+        <id column="fh_id" property="fhId"/>
+        <result column="fh_name" property="fhName"/>
+        <result column="fh_desc" property="fhDesc"/>
+        <result column="fh_time" property="fhTime"/>
+    </resultMap>
+
+    <!--基础sql字段-->
+    <sql id="Base_Column_List">
+        fh_id, fh_name, fh_desc, fh_time
+    </sql>
+    <insert id="insert">
+        insert into manager_fence_house(fh_id, fh_name, fh_desc, fh_time)
+        VALUES (#{fhId}, #{fhName}, #{fhDesc}, #{fhTime})
+    </insert>
+    <update id="updateByPrimaryKey">
+        update manager_fence_house
+        set fh_name = #{fhName}
+          , fh_desc = #{fhDesc}
+          , fh_time = #{fhTime}
+        where fh_id = #{fhId}
+    </update>
+    <delete id="deleteByPrimaryKey">
+        delete
+        from manager_fence_house
+        where fh_id = #{fhId}
+    </delete>
+    <delete id="deleteBatch" parameterType="collection">
+        delete from manager_fence_house
+        where fh_id in
+        <foreach collection="ids" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+
+    </delete>
+
+    <select id="queryAllHouses" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from manager_fence_house
+        <where>
+            <if test="fhName != null">
+                fh_name like concat('%',#{fhName},'%')
+            </if>
+        </where>
+    </select>
+    <select id="selectByFhName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from manager_fence_house
+        where fh_name = #{fhName}
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from manager_fence_house
+        where fh_id = #{fhId}
+    </select>
+    <select id="findAll" resultType="com.briup.product_source.pojo.ManagerFenceHouse">
+        select
+        <include refid="Base_Column_List"/>
+        from manager_fence_house
+    </select>
+    <select id="countAll" resultType="java.lang.Integer">
+        select count(*)
+        from manager_fence_house
+        union
+        select count(*)
+        from manager_hurdles
+        union
+        select count(*)
+        from manager_animal
+        union
+        select count(*)
+        from manager_freezer
+        union
+        select count(*)
+        from base_account
+    </select>
+</mapper>

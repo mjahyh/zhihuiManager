@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.product_source.dao.ext.ManagerAnimalExtMapper">
+    <!--映射一对一的响应结果集-->
+    <resultMap id="AnimalRelatedMap" type="managerAnimalExt">
+        <id column="a_animal_id" property="aAnimalId"/>
+        <result column="a_weight" property="aWeight"/>
+        <result column="a_gender" property="aGender"/>
+        <result column="a_healthy" property="aHealthy"/>
+        <result column="a_status" property="aStatus"/>
+        <result column="a_inoculate" property="aInoculate"/>
+        <result column="a_time" property="aTime"/>
+        <result column="a_batch_id" property="aBatchId"/>
+        <result column="a_hurdles_id" property="aHurdlesId"/>
+        <result column="h_name" property="managerHurdles"/>
+        <result column="fh_name" property="managerFenceHouse"/>
+        <result column="q_image_url" property="url"/>
+        <association property="managerBatch" resultMap="com.briup.product_source.dao.ManagerBatchMapper.BaseResultMap"/>
+    </resultMap>
+    <select id="findByPage" resultMap="AnimalRelatedMap">
+        SELECT a.*,b.h_name,c.fh_name,e.q_image_url,d.*
+        FROM manager_animal a
+        LEFT JOIN manager_hurdles b ON a.a_hurdles_id = b.h_id
+        LEFT JOIN manager_fence_house c ON b.h_fence_id = c.fh_id
+        LEFT JOIN manager_batch d ON d.b_serial_id = a.a_batch_id
+        LEFT JOIN manager_qrcode e ON a.a_animal_id = e.q_animal_id
+        <where>
+            <if test="aHealthy!=null">
+                AND a_healthy = #{aHealthy}
+            </if>
+            <if test="aGender!=null">
+                AND a_gender = #{aGender}
+            </if>
+        </where>
+    </select>
+    <select id="findById" resultMap="AnimalRelatedMap">
+        SELECT a.*,b.h_name,c.fh_name,e.q_image_url,d.*
+        FROM manager_animal a
+        LEFT JOIN manager_hurdles b ON a.a_hurdles_id = b.h_id
+        LEFT JOIN manager_fence_house c ON b.h_fence_id = c.fh_id
+        LEFT JOIN manager_batch d ON d.b_serial_id = a.a_batch_id
+        LEFT JOIN manager_qrcode e ON a.a_animal_id = e.q_animal_id
+        <where>
+            <if test="id!=null">
+                AND a_animal_id = #{id}
+            </if>
+        </where>
+    </select>
+</mapper>

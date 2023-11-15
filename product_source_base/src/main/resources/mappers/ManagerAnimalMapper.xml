@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.product_source.dao.ManagerAnimalMapper">
+    <!--基础查询结果集-->
+    <resultMap id="BaseResultMap" type="managerAnimal">
+        <id column="a_animal_id" property="aAnimalId"/>
+        <result column="a_weight" property="aWeight"/>
+        <result column="a_gender" property="aGender"/>
+        <result column="a_healthy" property="aHealthy"/>
+        <result column="a_status" property="aStatus"/>
+        <result column="a_inoculate" property="aInoculate"/>
+        <result column="a_time" property="aTime"/>
+        <result column="a_batch_id" property="aBatchId"/>
+        <result column="a_hurdles_id" property="aHurdlesId"/>
+    </resultMap>
+
+    <!--基础sql字段-->
+    <sql id="Base_Column_List">
+        a_animal_id
+        , a_weight, a_gender, a_healthy, a_status, a_inoculate, a_time, a_batch_id, a_hurdles_id
+    </sql>
+    <update id="updateAHealthyByAAnimalId">
+        update manager_animal
+        set a_healthy = #{aHealthy}
+        where a_animal_id = #{aAnimalId}
+    </update>
+    <delete id="deleteById">
+        delete from manager_animal
+        where a_animal_id = #{aAnimalId}
+    </delete>
+    <delete id="deleteBatch">
+        delete from manager_animal
+        where a_animal_id in
+        <foreach collection="deleteIds" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+    <!--添加动物信息-->
+    <insert id="insert" parameterType="managerAnimal">
+        insert into manager_animal (a_animal_id, a_weight, a_gender,
+                                    a_healthy, a_status, a_inoculate,
+                                    a_time, a_batch_id, a_hurdles_id)
+        values (#{aAnimalId}, #{aWeight}, #{aGender},
+                #{aHealthy}, #{aStatus}, #{aInoculate},
+                #{aTime}, #{aBatchId}, #{aHurdlesId})
+    </insert>
+
+    <!--根据编号修改动物信息-->
+    <update id="updateByPrimaryKey" parameterType="managerAnimal">
+        update manager_animal
+        set a_weight     = #{aWeight},
+            a_gender     = #{aGender},
+            a_healthy    = #{aHealthy},
+            a_status     = #{aStatus},
+            a_inoculate  = #{aInoculate},
+            a_time       = #{aTime},
+            a_batch_id   = #{aBatchId},
+            a_hurdles_id = #{aHurdlesId}
+        where a_animal_id = #{aAnimalId}
+    </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+            from manager_animal
+        where a_animal_id = #{drAnimalId}
+    </select>
+    <select id="countWeight" resultType="map">
+        SELECT COUNT(a_weight <![CDATA[ <]]> 30 OR NULL)                                 as "30以下",
+               COUNT(a_weight <![CDATA[ >]]> 50 OR NULL)                                 as "50以上",
+               COUNT(a_weight <![CDATA[ >=]]> 30 AND a_weight <![CDATA[ <=]]> 50 OR NULL) as "30~50"
+        from manager_animal
+    </select>
+
+</mapper>

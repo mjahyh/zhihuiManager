@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.product_source.dao.IssueRecordMapper">
+    <!--基础查询结果集-->
+    <resultMap id="BaseResultMap" type="issueRecord">
+        <id column="isr_id" property="isrId"/>
+        <result column="isr_time" property="isrTime"/>
+        <result column="isr_num" property="isrNum"/>
+        <result column="isr_price" property="isrPrice"/>
+        <result column="isr_deliver" property="isrDeliver"/>
+        <result column="isr_status" property="isrStatus"/>
+        <result column="isr_customer_id" property="isrCustomerId"/>
+    </resultMap>
+
+    <!--基础sql字段-->
+    <sql id="Base_Column_List">
+        isr_id
+        , isr_time, isr_num, isr_price, isr_deliver, isr_status, isr_customer_id
+    </sql>
+    <select id="countSales" resultType="java.util.Map">
+        SELECT MONTH(isr_time) AS "month", cast(sum(isr_num) as signed) as "saleNum"
+        FROM issue_record
+        where YEAR(isr_time) = YEAR(NOW())
+        GROUP BY MONTH(isr_time);
+    </select>
+
+</mapper>

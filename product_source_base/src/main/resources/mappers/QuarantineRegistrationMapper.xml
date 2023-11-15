@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.product_source.dao.QuarantineRegistrationMapper">
+    <!--基础查询结果集-->
+    <resultMap id="BaseResultMap" type="quarantineRegistration">
+        <id column="gr_id" property="grId"/>
+        <result column="gr_time" property="grTime"/>
+        <result column="gr_img" property="grImg"/>
+        <result column="gr_mechanism" property="grMechanism"/>
+        <result column="gr_batch_id" property="grBatchId"/>
+        <result column="b_qualified" property="bQualified"/>
+    </resultMap>
+
+    <!--基础sql字段-->
+    <sql id="Base_Column_List">
+        gr_id
+        , gr_time, gr_img, gr_mechanism, gr_batch_id,b_qualified
+    </sql>
+    <insert id="insert">
+        insert into quarantine_registration(gr_time, gr_img, gr_mechanism, gr_batch_id, b_qualified)
+        values(#{grTime},#{grImg},#{grMechanism},#{grBatchId},#{bQualified})
+    </insert>
+    <!--修改检疫登记信息-->
+    <update id="updateByPrimaryKey" parameterType="quarantineRegistration">
+        update quarantine_registration
+        set gr_time      = #{grTime},
+            gr_img       = #{grImg},
+            gr_mechanism = #{grMechanism},
+            gr_batch_id  = #{grBatchId},
+            b_qualified  = #{bQualified}
+        where gr_id = #{grId}
+    </update>
+    <update id="updateById">
+        update quarantine_registration
+        set gr_time = #{grTime},
+            gr_img = #{grImg},
+            gr_mechanism =#{grMechanism},
+            b_qualified = #{bQualified}
+        where gr_id = #{grId}
+    </update>
+    <delete id="deleteByPrimaryKey">
+        delete
+        from quarantine_registration
+        where gr_id = #{grId}
+    </delete>
+    <delete id="deleteBatch" parameterType="collection">
+        delete from quarantine_registration
+        where gr_id in
+        <foreach collection="deleteIds" open="(" close=")" separator="," item="grId">
+            #{grId}
+        </foreach>
+    </delete>
+    <select id="findByPage" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from quarantine_registration
+        <where>
+            <if test="bQualified !=null and bQualified != ''">
+                b_qualified  = #{bQualified}
+            </if>
+            <if test="grMechanism !=null and grMechanism != ''">
+                gr_mechanism like concat('%',#{grMechanism},'%')
+            </if>
+        </where>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from quarantine_registration
+        where gr_id = #{grId}
+    </select>
+
+</mapper>
